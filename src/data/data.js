@@ -1,7 +1,7 @@
 // src/data/data.js
 
 // URL de la API
-export const API_URL = "https://691b54b92d8d7855757278a4.mockapi.io/vehiculos";
+export const API_URL = "http://localhost:5000/api/vehicles";
 
 // Regex para validar patente
 export const PATENTE_REGEX = /^[A-Za-z0-9]{5,8}$/;

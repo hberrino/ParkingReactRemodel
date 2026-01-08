@@ -1,4 +1,3 @@
-// src/components/PanelConfig.jsx
 import React, { useState, useEffect } from "react";
 
 export default function PanelConfig({ config, setConfig }) {
@@ -19,7 +18,6 @@ export default function PanelConfig({ config, setConfig }) {
       precioAuto: parseInt(precioAuto),
     };
 
-    // Guardar en localStorage
     localStorage.setItem("espacios", nuevaConfig.espacios);
     localStorage.setItem("precioMoto", nuevaConfig.precioMoto);
     localStorage.setItem("precioAuto", nuevaConfig.precioAuto);

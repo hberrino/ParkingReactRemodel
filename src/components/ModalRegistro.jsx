@@ -1,4 +1,3 @@
-// src/components/ModalRegistro.jsx
 import Swal from "sweetalert2";
 import { API_URL, PATENTE_REGEX } from "../data/data.js";
 

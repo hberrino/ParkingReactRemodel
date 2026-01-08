@@ -1,4 +1,3 @@
-// src/components/PanelRetiro.jsx
 import { calcularCobro } from "../data/utils";
 
 export default function PanelRetiro({ espacio, config, onRetirar }) {

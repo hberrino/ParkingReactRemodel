@@ -1,0 +1,13 @@
+GET http://localhost:5000/api/vehicles
+###
+
+POST http://localhost:5000/api/vehicles
+Content-Type: application/json
+
+{
+  "tipo": "Auto",
+  "patente": "ABC123",
+  "espacioId": 1
+}
+###
+DELETE http://localhost:5000/api/vehicles/695ff23510eec070a0951ccc
