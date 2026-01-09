@@ -1,7 +1,7 @@
 export default function ParkingGrid({ estacionamiento, onEspacioClick }) {
   return (
     <div className="p-4 rounded-xl bg-gray-900 border border-gray-700 shadow-sm transition">
-      {/* Título */}
+
       <h2 className="text-center text-xl font-semibold border-b border-gray-700 pb-2 mb-4 text-gray-100">
         Estacionamiento
       </h2>
