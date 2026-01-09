@@ -1,76 +1,209 @@
 import { useState, useEffect } from "react";
 import PanelConfig from "./components/PanelConfig";
 import ParkingGrid from "./components/ParkingGrid";
-import ModalRegistro from "./components/ModalRegistro";
 import PanelRetiro from "./components/PanelRetiro";
-import { API_URL } from "./data/data.js";
+import ModalRegistro from "./components/ModalRegistro";
+import Swal from "sweetalert2";
+import { VEHICLES_URL, SETTINGS_URL, LOGS_URL } from "./data/data.js";
 
-function App() {
-  const [config, setConfig] = useState({
-    espacios: parseInt(localStorage.getItem("espacios")) || 20,
-    precioMoto: parseInt(localStorage.getItem("precioMoto")) || 300,
-    precioAuto: parseInt(localStorage.getItem("precioAuto")) || 500,
-  });
-
+export default function App() {
+  const [config, setConfig] = useState(null);
   const [estacionamiento, setEstacionamiento] = useState([]);
-  const [modalRegistroOpen, setModalRegistroOpen] = useState(false);
   const [espacioSeleccionado, setEspacioSeleccionado] = useState(null);
+  const [modalRegistroOpen, setModalRegistroOpen] = useState(false);
   const [tipo, setTipo] = useState("Auto");
   const [patente, setPatente] = useState("");
+  const [logs, setLogs] = useState([]);
 
   useEffect(() => {
-    async function cargarEstacionamiento() {
-      try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        const espacios = Array.from({ length: config.espacios }, (_, i) => {
-          const veh = data.find((v) => v.espacioId === i + 1);
-          return {
-            id: i + 1,
-            libre: !veh,
-            vehiculo: veh ? { tipo: veh.tipo, patente: veh.patente, fechaIngreso: veh.fechaIngreso } : null,
-          };
+    fetch(SETTINGS_URL)
+      .then((res) => res.json())
+      .then((data) => setConfig(data))
+      .catch(() => {
+        Swal.fire({
+          icon: "error",
+          title: "No se pudo cargar la configuración",
         });
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!config) return;
+
+    fetch(VEHICLES_URL)
+      .then((res) => res.json())
+      .then((data) => {
+        const espacios = Array.from({ length: config.espacios }, (_, i) => ({
+          id: i + 1,
+          libre: true,
+          vehiculo: null,
+        }));
+
+        data.forEach((veh) => {
+          if (espacios[veh.espacioId - 1]) {
+            espacios[veh.espacioId - 1].libre = false;
+            espacios[veh.espacioId - 1].vehiculo = veh;
+          }
+        });
+
         setEstacionamiento(espacios);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    cargarEstacionamiento();
-  }, [config.espacios]);
+      });
+  }, [config]);
+
+  useEffect(() => {
+    fetch(LOGS_URL)
+      .then((res) => res.json())
+      .then((data) => setLogs(data.reverse()));
+  }, []);
 
   const handleEspacioClick = (espacio) => {
     setEspacioSeleccionado(espacio);
-    if (espacio.libre) {
-      setTipo("Auto");
+    if (espacio.libre) setModalRegistroOpen(true);
+  };
+
+  const handleRegister = async (id, tipo, patente) => {
+    const fecha = new Date().toISOString();
+
+    try {
+      await fetch(VEHICLES_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tipo, patente, espacioId: id }),
+      });
+
+      await fetch(LOGS_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          patente,
+          tipo,
+          espacioId: id,
+          accion: "INGRESO",
+          fecha,
+        }),
+      });
+
+      setEstacionamiento((prev) =>
+        prev.map((e) =>
+          e.id === id
+            ? { ...e, libre: false, vehiculo: { tipo, patente, fecha } }
+            : e
+        )
+      );
+
+      setLogs((prev) => [
+        { patente, tipo, espacioId: id, accion: "INGRESO", fecha },
+        ...prev,
+      ]);
+
+      setModalRegistroOpen(false);
       setPatente("");
-      setModalRegistroOpen(true);
+
+      Swal.fire({
+        icon: "success",
+        title: "Ingreso registrado",
+        background: "#111827",
+        color: "#f9fafb",
+      });
+    } catch {
+      Swal.fire({ icon: "error", title: "Error al registrar" });
     }
   };
 
+  const handleRetiro = async (id) => {
+    const vehiculo = estacionamiento.find((e) => e.id === id)?.vehiculo;
+    if (!vehiculo) return;
+
+    try {
+      const vehiculos = await fetch(VEHICLES_URL).then((r) => r.json());
+      const actual = vehiculos.find((v) => v.espacioId === id);
+
+      if (actual?._id) {
+        await fetch(`${VEHICLES_URL}/${actual._id}`, { method: "DELETE" });
+      }
+
+      await fetch(LOGS_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          patente: vehiculo.patente,
+          tipo: vehiculo.tipo,
+          espacioId: id,
+          accion: "SALIDA",
+          fecha: new Date().toISOString(),
+        }),
+      });
+
+      setEstacionamiento((prev) =>
+        prev.map((e) =>
+          e.id === id ? { ...e, libre: true, vehiculo: null } : e
+        )
+      );
+
+      setLogs((prev) => [
+        {
+          patente: vehiculo.patente,
+          tipo: vehiculo.tipo,
+          espacioId: id,
+          accion: "SALIDA",
+          fecha: new Date().toISOString(),
+        },
+        ...prev,
+      ]);
+
+      setEspacioSeleccionado(null);
+
+      Swal.fire({
+        icon: "success",
+        title: "Retiro exitoso",
+        background: "#111827",
+        color: "#f9fafb",
+      });
+    } catch {
+      Swal.fire({ icon: "error", title: "Error al retirar" });
+    }
+  };
+
+  if (!config) {
+    return (
+      <div className="h-screen bg-gray-900 text-gray-200 flex items-center justify-center">
+        Cargando configuración...
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-black text-green-400 p-4">
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="w-full md:w-1/3 lg:w-1/4">
-          <PanelConfig config={config} setConfig={setConfig} />
+    <div className="h-screen bg-gray-900 text-gray-200 p-4 flex flex-col md:flex-row gap-6">
+      <div className="w-full md:w-1/4 flex flex-col gap-4 h-full">
+        <PanelConfig config={config} setConfig={setConfig} />
+
+        <div className="flex-1 p-4 rounded-xl bg-gray-900 border border-gray-700 overflow-y-auto text-sm">
+          <h2 className="font-semibold mb-2 border-b border-gray-700 pb-1">
+            Registro
+          </h2>
+
+          {logs.map((l, i) => (
+            <div key={i}>
+              {l.accion} · {l.patente} ·{" "}
+              {new Date(l.fecha).toLocaleString()}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="w-full md:w-3/4 flex flex-col gap-4 h-full">
+        <div className="flex-1 overflow-y-auto">
+          <ParkingGrid
+            estacionamiento={estacionamiento}
+            onEspacioClick={handleEspacioClick}
+          />
         </div>
 
-        <div className="w-full md:w-2/3 lg:w-3/4 flex flex-col gap-4">
-          <ParkingGrid estacionamiento={estacionamiento} onEspacioClick={handleEspacioClick} />
-
-          {espacioSeleccionado && !espacioSeleccionado.libre && (
-            <PanelRetiro
-              espacio={espacioSeleccionado}
-              config={config}
-              onRetirar={(id) => {
-                setEstacionamiento((prev) =>
-                  prev.map((esp) => (esp.id === id ? { ...esp, libre: true, vehiculo: null } : esp))
-                );
-                setEspacioSeleccionado(null);
-              }}
-            />
-          )}
-        </div>
+        <PanelRetiro
+          espacio={espacioSeleccionado}
+          config={config}
+          onRetirar={handleRetiro}
+        />
       </div>
 
       <ModalRegistro
@@ -81,16 +214,8 @@ function App() {
         setTipo={setTipo}
         patente={patente}
         setPatente={setPatente}
-        onRegister={(id, tipo, patente) => {
-          setEstacionamiento((prev) =>
-            prev.map((esp) =>
-              esp.id === id ? { ...esp, libre: false, vehiculo: { tipo, patente, fechaIngreso: new Date().toISOString() } } : esp
-            )
-          );
-        }}
+        onRegister={handleRegister}
       />
     </div>
   );
 }
-
-export default App;

@@ -1,74 +1,111 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import { SETTINGS_URL } from "../data/data.js";
 
 export default function PanelConfig({ config, setConfig }) {
-  const [espacios, setEspacios] = useState(config.espacios);
-  const [precioMoto, setPrecioMoto] = useState(config.precioMoto);
-  const [precioAuto, setPrecioAuto] = useState(config.precioAuto);
+  const [espacios, setEspacios] = useState("");
+  const [precioMoto, setPrecioMoto] = useState("");
+  const [precioAuto, setPrecioAuto] = useState("");
+  const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
+    if (!config) return;
     setEspacios(config.espacios);
     setPrecioMoto(config.precioMoto);
     setPrecioAuto(config.precioAuto);
   }, [config]);
 
-  const guardarCambios = () => {
+  const guardarCambios = async () => {
+    if (guardando) return;
+
     const nuevaConfig = {
-      espacios: parseInt(espacios),
-      precioMoto: parseInt(precioMoto),
-      precioAuto: parseInt(precioAuto),
+      espacios: Number(espacios),
+      precioMoto: Number(precioMoto),
+      precioAuto: Number(precioAuto),
     };
 
-    localStorage.setItem("espacios", nuevaConfig.espacios);
-    localStorage.setItem("precioMoto", nuevaConfig.precioMoto);
-    localStorage.setItem("precioAuto", nuevaConfig.precioAuto);
+    try {
+      setGuardando(true);
 
-    setConfig(nuevaConfig);
+      const res = await fetch(SETTINGS_URL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevaConfig),
+      });
+
+      const savedConfig = await res.json();
+      setConfig(savedConfig);
+
+      Swal.fire({
+        icon: "success",
+        title: "Cambios guardados",
+        text: "La configuración se actualizó correctamente.",
+        background: "#111827",
+        color: "#f9fafb",
+        confirmButtonColor: "#10b981",
+      });
+    } catch {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo guardar la configuración.",
+        background: "#111827",
+        color: "#f9fafb",
+        confirmButtonColor: "#ef4444",
+      });
+    } finally {
+      setGuardando(false);
+    }
   };
 
   return (
-    <div className="p-4 border border-green-500 rounded-lg shadow-md bg-black text-green-400 flex flex-col gap-4">
-      <h2 className="text-xl font-bold border-l-4 border-green-500 pl-2 mb-2">
+    <div className="p-4 rounded-xl bg-gray-900 border border-gray-700 flex flex-col gap-4">
+      <h2 className="text-xl font-semibold border-b border-gray-700 pb-2">
         Configuración
       </h2>
 
-      <div className="flex flex-col gap-2">
-        <label>Cantidad de espacios:</label>
+      <div>
+        <label className="text-sm text-gray-400">Espacios</label>
         <input
           type="number"
-          min="1"
           value={espacios}
           onChange={(e) => setEspacios(e.target.value)}
-          className="p-2 rounded border border-green-400 bg-black text-green-400"
+          className="w-full p-2 rounded bg-gray-800 border border-gray-700"
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label>Precio Moto por hora:</label>
+      <div>
+        <label className="text-sm text-gray-400">Precio Moto</label>
         <input
           type="number"
-          min="0"
           value={precioMoto}
           onChange={(e) => setPrecioMoto(e.target.value)}
-          className="p-2 rounded border border-green-400 bg-black text-green-400"
+          className="w-full p-2 rounded bg-gray-800 border border-gray-700"
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label>Precio Auto por hora:</label>
+      <div>
+        <label className="text-sm text-gray-400">Precio Auto</label>
         <input
           type="number"
-          min="0"
           value={precioAuto}
           onChange={(e) => setPrecioAuto(e.target.value)}
-          className="p-2 rounded border border-green-400 bg-black text-green-400"
+          className="w-full p-2 rounded bg-gray-800 border border-gray-700"
         />
       </div>
 
       <button
         onClick={guardarCambios}
-        className="mt-2 p-2 bg-green-500 text-black font-bold rounded hover:bg-green-400 transition"
+        className={`
+          mt-2 py-2 rounded-xl
+          bg-gray-700
+          hover:bg-gray-600
+          active:scale-[0.97]
+          transition-all duration-150
+          ${guardando ? "opacity-60" : ""}
+        `}
       >
-        Guardar
+        {guardando ? "Guardando..." : "Guardar cambios"}
       </button>
     </div>
   );

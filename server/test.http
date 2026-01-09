@@ -11,3 +11,6 @@ Content-Type: application/json
 }
 ###
 DELETE http://localhost:5000/api/vehicles/695ff23510eec070a0951ccc
+
+###
+GET http://localhost:5000/api/logs

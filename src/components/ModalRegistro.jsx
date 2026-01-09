@@ -1,5 +1,5 @@
 import Swal from "sweetalert2";
-import { API_URL, PATENTE_REGEX } from "../data/data.js";
+import { VEHICLES_URL, PATENTE_REGEX } from "../data/data.js";
 
 export default function ModalRegistro({
   show,
@@ -13,6 +13,11 @@ export default function ModalRegistro({
 }) {
   if (!show || !espacioSeleccionado) return null;
 
+  const resetForm = () => {
+    setPatente("");
+    setTipo("Auto");
+  };
+
   const handleRegister = async () => {
     const patenteTrim = patente.trim().toUpperCase();
 
@@ -21,9 +26,9 @@ export default function ModalRegistro({
         icon: "error",
         title: "Patente inválida",
         text: "Solo letras y números (5 a 8 caracteres).",
-        confirmButtonColor: "#ff4e4e",
-        background: "#2b0000",
-        color: "#ffbebe",
+        background: "#111827",
+        color: "#f9fafb",
+        confirmButtonColor: "#ef4444",
       });
       return;
     }
@@ -31,7 +36,7 @@ export default function ModalRegistro({
     try {
       const fechaISO = new Date().toISOString();
 
-      await fetch(API_URL, {
+      await fetch(VEHICLES_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -48,33 +53,40 @@ export default function ModalRegistro({
         icon: "success",
         title: "Vehículo registrado",
         text: "Ingreso guardado correctamente.",
-        confirmButtonColor: "#00ffbf",
-        background: "#001d17",
-        color: "#00ffbf",
+        background: "#111827",
+        color: "#f9fafb",
+        confirmButtonColor: "#10b981",
       });
 
+      resetForm();
       onClose();
     } catch (error) {
-      console.error("Error al registrar vehículo:", error);
       Swal.fire({
         icon: "error",
         title: "Error",
         text: "No se pudo registrar el vehículo.",
-        confirmButtonColor: "#ff4e4e",
-        background: "#2b0000",
-        color: "#ffbebe",
+        background: "#111827",
+        color: "#f9fafb",
+        confirmButtonColor: "#ef4444",
       });
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
-      <div className="bg-gray-900 border-2 border-green-400 rounded-lg p-6 w-80">
-        <h3 className="text-green-400 mb-4">Registrar Vehículo</h3>
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
 
-        <label className="block mb-2">Tipo:</label>
+  return (
+    <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
+      <div className="bg-gray-900 rounded-xl p-6 w-80 border border-gray-700 shadow-sm text-gray-200">
+        <h3 className="text-xl font-semibold mb-4 text-center">
+          Registrar Vehículo
+        </h3>
+
+        <label className="block mb-2 text-sm text-gray-400">Tipo</label>
         <select
-          className="w-full mb-4 p-2 rounded border-2 border-green-400 bg-black text-green-400"
+          className="w-full mb-4 p-2 rounded-md border border-gray-700 bg-gray-800 text-gray-100"
           value={tipo}
           onChange={(e) => setTipo(e.target.value)}
         >
@@ -82,25 +94,25 @@ export default function ModalRegistro({
           <option value="Moto">Moto</option>
         </select>
 
-        <label className="block mb-2">Patente:</label>
+        <label className="block mb-2 text-sm text-gray-400">Patente</label>
         <input
           type="text"
           placeholder="ABC123 / AA123BB"
-          className="w-full mb-4 p-2 rounded border-2 border-green-400 bg-black text-green-400"
+          className="w-full mb-4 p-2 rounded-md border border-gray-700 bg-gray-800 text-gray-100"
           value={patente}
           onChange={(e) => setPatente(e.target.value)}
         />
 
-        <div className="flex justify-between">
+        <div className="flex gap-3">
           <button
-            className="px-4 py-2 border-2 border-green-400 rounded hover:bg-green-400 hover:text-black transition"
             onClick={handleRegister}
+            className="flex-1 bg-gray-700 hover:bg-gray-600 transition rounded-xl py-2"
           >
             Registrar
           </button>
           <button
-            className="px-4 py-2 border-2 border-green-400 rounded hover:bg-green-400 hover:text-black transition"
-            onClick={onClose}
+            onClick={handleClose}
+            className="flex-1 bg-gray-700 hover:bg-gray-600 transition rounded-xl py-2"
           >
             Cancelar
           </button>
