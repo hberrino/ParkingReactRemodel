@@ -166,28 +166,73 @@ export default function App() {
 
   if (!config) {
     return (
-      <div className="h-screen bg-gray-900 text-gray-200 flex items-center justify-center">
-        Cargando configuración...
+      <div className="h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-gray-200 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg font-medium">Cargando configuración...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen bg-gray-900 text-gray-200 p-4 flex flex-col md:flex-row gap-6">
+    <div className="h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-900 text-gray-200 p-4 flex flex-col md:flex-row gap-6">
       <div className="w-full md:w-1/4 flex flex-col gap-4 h-full">
         <PanelConfig config={config} setConfig={setConfig} />
 
-        <div className="flex-1 p-4 rounded-xl bg-gray-900 border border-gray-700 overflow-y-auto text-sm">
-          <h2 className="font-semibold mb-2 border-b border-gray-700 pb-1">
-            Registro
+        <div className="flex-1 p-5 rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 shadow-xl overflow-y-auto animate-fade-in">
+          <h2 className="font-bold text-lg mb-4 border-b border-gray-700/50 pb-3 text-gray-100 tracking-tight">
+            Registro de Actividad
           </h2>
 
-          {logs.map((l, i) => (
-            <div key={i}>
-              {l.accion} · {l.patente} ·{" "}
-              {new Date(l.fecha).toLocaleString()}
-            </div>
-          ))}
+          <div className="space-y-2">
+            {logs.length > 0 ? (
+              logs.map((l, i) => {
+                const esIngreso = l.accion === "INGRESO";
+                return (
+                  <div
+                    key={i}
+                    className={`p-3 rounded-lg border transition-all duration-200 hover:scale-[1.02] 
+                      ${
+                        esIngreso
+                          ? "bg-green-900/20 border-green-700/30 hover:bg-green-900/30"
+                          : "bg-red-900/20 border-red-700/30 hover:bg-red-900/30"
+                      }
+                    `}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span
+                        className={`text-xs font-bold px-2 py-0.5 rounded ${
+                          esIngreso
+                            ? "bg-green-700/50 text-green-200"
+                            : "bg-red-700/50 text-red-200"
+                        }`}
+                      >
+                        {esIngreso ? "INGRESO" : "SALIDA"}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {new Date(l.fecha).toLocaleTimeString("es-AR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                    <p className="font-semibold text-gray-100 mb-1">{l.patente}</p>
+                    <p className="text-xs text-gray-400">
+                      {new Date(l.fecha).toLocaleDateString("es-AR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="text-center py-8 text-gray-400">
+                <p className="text-sm">No hay registros aún</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

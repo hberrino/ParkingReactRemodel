@@ -88,13 +88,13 @@ export default function PanelConfig({ config, setConfig }) {
   };
 
   return (
-    <div className="p-4 rounded-xl bg-gray-900 border border-gray-700 flex flex-col gap-4">
-      <h2 className="text-xl font-semibold border-b border-gray-700 pb-2">
+    <div className="p-5 rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 shadow-xl flex flex-col gap-5 animate-fade-in">
+      <h2 className="text-xl font-bold border-b border-gray-700/50 pb-3 text-gray-100 tracking-tight">
         Configuración
       </h2>
 
-      <div>
-        <label className="text-sm text-gray-400">
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-gray-300">
           Espacios (máx. {MAX_ESPACIOS})
         </label>
         <input
@@ -103,41 +103,61 @@ export default function PanelConfig({ config, setConfig }) {
           max={MAX_ESPACIOS}
           value={espacios}
           onChange={(e) => setEspacios(e.target.value)}
-          className="w-full p-2 rounded bg-gray-800 border border-gray-700"
+          className="w-full px-4 py-2.5 rounded-lg bg-gray-800/80 border border-gray-600/50 text-gray-100 placeholder-gray-500 
+                     focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 
+                     transition-all duration-200 hover:border-gray-500"
         />
       </div>
 
-      <div>
-        <label className="text-sm text-gray-400">Precio Moto</label>
-        <input
-          type="number"
-          min="0"
-          value={precioMoto}
-          onChange={(e) => setPrecioMoto(e.target.value)}
-          className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-        />
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-gray-300">
+          Precio Moto
+        </label>
+        <div className="relative">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={precioMoto}
+            onChange={(e) => setPrecioMoto(e.target.value)}
+            className="w-full pl-8 pr-4 py-2.5 rounded-lg bg-gray-800/80 border border-gray-600/50 text-gray-100 placeholder-gray-500 
+                       focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 
+                       transition-all duration-200 hover:border-gray-500"
+          />
+        </div>
       </div>
 
-      <div>
-        <label className="text-sm text-gray-400">Precio Auto</label>
-        <input
-          type="number"
-          min="0"
-          value={precioAuto}
-          onChange={(e) => setPrecioAuto(e.target.value)}
-          className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-        />
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-gray-300">
+          Precio Auto
+        </label>
+        <div className="relative">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={precioAuto}
+            onChange={(e) => setPrecioAuto(e.target.value)}
+            className="w-full pl-8 pr-4 py-2.5 rounded-lg bg-gray-800/80 border border-gray-600/50 text-gray-100 placeholder-gray-500 
+                       focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 
+                       transition-all duration-200 hover:border-gray-500"
+          />
+        </div>
       </div>
 
       <button
         onClick={guardarCambios}
         disabled={guardando}
         className={`
-          mt-2 py-2 rounded-xl
-          bg-gray-700
-          hover:bg-gray-600
-          active:scale-[0.97]
-          transition-all duration-150
+          mt-1 py-3 rounded-xl font-semibold
+          bg-gradient-to-r from-blue-600 to-blue-700
+          hover:from-blue-500 hover:to-blue-600
+          active:scale-[0.98]
+          transition-all duration-200
+          shadow-lg shadow-blue-900/30
+          hover:shadow-xl hover:shadow-blue-900/40
           ${guardando ? "opacity-60 cursor-not-allowed" : ""}
         `}
       >

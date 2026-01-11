@@ -78,41 +78,60 @@ export default function ModalRegistro({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
-      <div className="bg-gray-900 rounded-xl p-6 w-80 border border-gray-700 shadow-sm text-gray-200">
-        <h3 className="text-xl font-semibold mb-4 text-center">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fade-in">
+      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 w-full max-w-sm border border-gray-700/50 shadow-2xl text-gray-200 animate-slide-in">
+        <h3 className="text-2xl font-bold mb-6 text-center text-gray-100 tracking-tight">
           Registrar Vehículo
         </h3>
 
-        <label className="block mb-2 text-sm text-gray-400">Tipo</label>
-        <select
-          className="w-full mb-4 p-2 rounded-md border border-gray-700 bg-gray-800 text-gray-100"
-          value={tipo}
-          onChange={(e) => setTipo(e.target.value)}
-        >
-          <option value="Auto">Auto</option>
-          <option value="Moto">Moto</option>
-        </select>
+        <div className="space-y-4 mb-6">
+          <div>
+            <label className="block mb-2 text-sm font-medium text-gray-300">
+              Tipo de Vehículo
+            </label>
+            <select
+              className="w-full p-3 rounded-lg border border-gray-600/50 bg-gray-800/80 text-gray-100
+                         focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50
+                         transition-all duration-200 hover:border-gray-500"
+              value={tipo}
+              onChange={(e) => setTipo(e.target.value)}
+            >
+              <option value="Auto">Auto</option>
+              <option value="Moto">Moto</option>
+            </select>
+          </div>
 
-        <label className="block mb-2 text-sm text-gray-400">Patente</label>
-        <input
-          type="text"
-          placeholder="ABC123 / AA123BB"
-          className="w-full mb-4 p-2 rounded-md border border-gray-700 bg-gray-800 text-gray-100"
-          value={patente}
-          onChange={(e) => setPatente(e.target.value)}
-        />
+          <div>
+            <label className="block mb-2 text-sm font-medium text-gray-300">
+              Patente
+            </label>
+            <input
+              type="text"
+              placeholder="ABC123 / AA123BB"
+              className="w-full p-3 rounded-lg border border-gray-600/50 bg-gray-800/80 text-gray-100 placeholder-gray-500
+                         focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50
+                         transition-all duration-200 hover:border-gray-500 uppercase"
+              value={patente}
+              onChange={(e) => setPatente(e.target.value)}
+              autoFocus
+            />
+          </div>
+        </div>
 
         <div className="flex gap-3">
           <button
             onClick={handleRegister}
-            className="flex-1 bg-gray-700 hover:bg-gray-600 transition rounded-xl py-2"
+            className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 
+                       transition-all duration-200 rounded-xl py-3 font-semibold shadow-lg shadow-blue-900/30
+                       hover:shadow-xl hover:shadow-blue-900/40 active:scale-[0.98]"
           >
             Registrar
           </button>
           <button
             onClick={handleClose}
-            className="flex-1 bg-gray-700 hover:bg-gray-600 transition rounded-xl py-2"
+            className="flex-1 bg-gray-700/80 hover:bg-gray-600/80 
+                       transition-all duration-200 rounded-xl py-3 font-semibold border border-gray-600/50
+                       hover:border-gray-500 active:scale-[0.98]"
           >
             Cancelar
           </button>
