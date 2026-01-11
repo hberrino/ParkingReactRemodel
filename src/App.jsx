@@ -4,10 +4,12 @@ import ParkingGrid from "./components/ParkingGrid";
 import PanelRetiro from "./components/PanelRetiro";
 import ModalRegistro from "./components/ModalRegistro";
 import ModalDetalleCobro from "./components/ModalDetalleCobro";
+import Login from "./components/Login";
 import Swal from "sweetalert2";
 import { VEHICLES_URL, SETTINGS_URL, LOGS_URL } from "./data/data.js";
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [config, setConfig] = useState(null);
   const [estacionamiento, setEstacionamiento] = useState([]);
   const [espacioSeleccionado, setEspacioSeleccionado] = useState(null);
@@ -16,6 +18,14 @@ export default function App() {
   const [tipo, setTipo] = useState("Auto");
   const [patente, setPatente] = useState("");
   const [logs, setLogs] = useState([]);
+
+  // Verificar si ya está autenticado (al cargar la página)
+  useEffect(() => {
+    const authStatus = localStorage.getItem("parkingAuth");
+    if (authStatus === "true") {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   useEffect(() => {
     fetch(SETTINGS_URL)
@@ -165,6 +175,10 @@ export default function App() {
       Swal.fire({ icon: "error", title: "Error al retirar" });
     }
   };
+
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />;
+  }
 
   if (!config) {
     return (
