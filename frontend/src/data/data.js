@@ -1,5 +1,5 @@
 export const PATENTE_REGEX = /^[A-Za-z0-9]{5,8}$/;
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 
 export const VEHICLES_URL = `${API_URL}/api/vehicles`;
 export const SETTINGS_URL = `${API_URL}/api/settings`;
