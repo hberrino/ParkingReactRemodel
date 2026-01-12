@@ -21,7 +21,7 @@ app.use(cors({
 
 app.use(express.json());
 
-app.use("/api/settings", settingsRoutes);
+app.use("/api/setting", settingsRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/logs", logRoutes);
 
