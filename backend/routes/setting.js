@@ -20,10 +20,12 @@ router.get("/", async (req, res) => {
     }
 
     res.json(settings);
-  } catch {
-    res.status(500).json({ message: "Error cargando configuración" });
+  } catch (err) {
+    console.error("Error cargando configuración:", err);
+    res.status(500).json({ message: "Error cargando configuración", error: err.message });
   }
 });
+
 
 router.put("/", async (req, res) => {
   try {
