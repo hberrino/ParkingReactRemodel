@@ -12,7 +12,13 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    "https://parkingarg.onrender.com", // tu frontend en Render
+    "http://localhost:5173"            // tu frontend local (si usas Vite)
+  ]
+}));
+
 app.use(express.json());
 
 app.use("/api/settings", settingsRoutes);
