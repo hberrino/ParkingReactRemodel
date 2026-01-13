@@ -45,30 +45,26 @@ NOTA: Antes de correr el backend, crea un archivo llamado .env dentro de la carp
 PORT=3000
 MONGO_URI=<tu_mongo_uri>
 
-ORGANIZACION DEL DESARROLLO:
+ORGANIZACIÓN DEL DESARROLLO:
+
 parkingarg/
-│
 ├─ backend/
 │  ├─ models/
 │  │  ├─ Logs.js
 │  │  ├─ Settings.js
 │  │  └─ Vehicle.js
-│  │
 │  ├─ routes/
 │  │  ├─ logs.js
 │  │  ├─ setting.js
 │  │  └─ vehicles.js
-│  │
 │  ├─ package.json
 │  ├─ server.js
 │  └─ test.http
-│
 ├─ frontend/
 │  ├─ public/
 │  │  ├─ demo/
 │  │  │  └─ <video_demo.mp4>
-│  │  └─ imgs/  (vacía)
-│  │
+│  │  └─ imgs/ (vacía)
 │  ├─ src/
 │  │  ├─ componentes/
 │  │  │  ├─ Login.jsx
@@ -78,11 +74,9 @@ parkingarg/
 │  │  │  ├─ PanelConfig.jsx
 │  │  │  ├─ PanelRetiro.jsx
 │  │  │  └─ ParkingGrid.jsx
-│  │  │
 │  │  ├─ data/
 │  │  │  ├─ data.js
 │  │  │  └─ utils.js
-│  │  │
 │  │  ├─ App.jsx
 │  │  ├─ main.jsx
 │  │  ├─ index.css
@@ -90,6 +84,5 @@ parkingarg/
 │  │  ├─ eslint.config.js
 │  │  ├─ package.json
 │  │  └─ vite.config.js
-│
 ├─ .gitignore
 └─ README.md
