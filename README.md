@@ -29,7 +29,7 @@ _Herramientas adicionales_
 Instalación:
 
 1. Clonar el repo:
-git clone https://github.com/tuusuario/parkingarg.git
+git clone https://github.com/hberrino/ParkingReactRemodel
 
 2. Backend:
 cd backend
